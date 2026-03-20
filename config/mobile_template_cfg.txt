@@ -1,0 +1,49 @@
+# ==========================================================
+#  Example NPU Simulator Configuration File
+# ==========================================================
+
+# ---- Core Configuration ----
+core_num = 4                  # number of cores
+npu_freq = 0.25                # NPU Core frequency (GHz)
+systolic_array_size = 16       # systolic array dimension (16x16)
+dma_bus_width = 4096           # DMA transfer bus width (bytes)
+inst_buffer_depth = 4          # instruction buffer depth
+dma_queue_depth = 2            # DMA queue depth
+ce_queue_depth = 2             # CE queue depth
+ce_cycle_factor = 1            # CE cycle factor
+ce_cycle_bias = 2              # CE cycle bias
+
+# ---- NoC Configuration ----
+noc_mode = 0                   # NoC type: 1 (analytic) or 0 (detail)
+noc_freq = 0.25                # NoC frequency (GHz)
+noc_link_width = 16            # NoC link width (bytes)
+noc_link_latency = 1           # NoC link latency (cycles)
+noc_router_latency = 1         # NoC router latency (cycles)
+noc_request_queue_depth = 4    # NoC request queue depth
+an_noc_method = 2              # analytic NoC method: 2 (traffic-aware) or 1 (queueing with fixed parameters) or 0 (hop-based)          
+noc_sampling_period = 1000     # NoC sampling period
+noc_num_saved_samples = 5    # maximum number of samples in sliding window
+
+# ---- DRAM Configuration ----
+ddr_mode = 0                   # DRAM type: 1 (analytic) or 0 (detail)
+dramsim_cfg_path = ./external/DRAMsim3/configs/DDR4_4Gb_x4_2400.ini # DRAMSim3 configuration file path, only valid in detail dram mode
+ddr_freq = 1.2                 # DRAM frequency (GHz)
+ddr_bandwidth = 19.2           # DRAM bandwidth (GB/s) 
+tBASE = 50                     # DRAM base latency (DDR cycles)
+tCAS = 15                      # DRAM CAS latency (DDR cycles)
+tRCD = 15                      # DRAM RCD latency (DDR cycles)
+tRP = 14                       # DRAM RP latency (DDR cycles)
+tBURST = 4                     # DRAM burst latency (DDR cycles)
+BL = 8                         # DRAM burst length (typically 8 bits)
+ddr_bus_width = 64             # DRAM bus width (typically 64 bits)
+ddr_request_quue_depth = 8     # DRAM request queue depth
+ddr_max_outstanding = 4        # DRAM maximum outstanding transactions
+
+# ---- Simulation parameters ----
+max_sim_cycle = 1000000000      # maximum simulation npu core cycles
+inst_file = ./benchmarks/alexnet_conv3_4tile_inst.bin
+enable_log = 0                 # enable log file: 1 (enable) or 0 (disable)
+enable_inst_trace = 0          # enable instruction trace: 1 (enable) or 0 (disable)
+log_dir = ./log
+log_file   = alexnet.log
+

@@ -1,0 +1,13 @@
+Layer name,Seq Length,Embed Dim,Num Heads,FFN Dim
+Encoder1,512,768,12,3072
+Encoder2,512,768,12,3072
+Encoder3,512,768,12,3072
+Encoder4,512,768,12,3072
+Encoder5,512,768,12,3072
+Encoder6,512,768,12,3072
+Encoder7,512,768,12,3072
+Encoder8,512,768,12,3072
+Encoder9,512,768,12,3072
+Encoder10,512,768,12,3072
+Encoder11,512,768,12,3072
+Encoder12,512,768,12,3072

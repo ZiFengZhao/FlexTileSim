@@ -1,0 +1,2 @@
+Layer name,Seq Length,Embed Dim,Num Heads,FFN Dim
+Encoder1,8,16,4,32

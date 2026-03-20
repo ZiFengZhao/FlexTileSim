@@ -1,0 +1,15 @@
+---
+BasedOnStyle: Google
+
+IndentWidth: 4
+ContinuationIndentWidth: 4
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: Inline
+PointerAlignment: Left
+SortIncludes: true
+AccessModifierOffset: -4
+NamespaceIndentation: None
+IndentCaseLabels: true
+SpaceBeforeCpp11BracedList: false
+
+...
