@@ -1,0 +1,1 @@
+Gelu 0 dep=00 ocm_out=0x00007020 ocm_in=0x00005020 de_shift=4 de_scale=4 shift=36 scale=2 // [GeLU] GeLU C(i=0, j=0)

@@ -1,0 +1,1 @@
+Layernorm 0 dep=00 ocm_out=0x00005020 ocm_in=0x00001020 de_shift=16 de_scale=11 shift=-4 scale=131 // [LayerNorm] LayerNorm height=0

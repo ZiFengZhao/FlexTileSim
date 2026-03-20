@@ -1,0 +1,17 @@
+# Core 0 instructions
+Mvin 0 dep=10 src=0x90000000 dst=0x00001000 Width=4 Height=4 stride=16 // [Gemm] Mvin A(i=0)
+Transpose 1 dep=01 ocm_in=0x00001000 ocm_out=0x00000820 // [Gemm] Transpose A
+Mvin 2 dep=10 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+GEMM 3 dep=11 src0=0x00000820 src1=0x00001820 // [Gemm] GEMM (i=0, j=0)
+Mvout 4 dep=01 src=0x000001820 dst=0x80000000 Width=4 Height=4 stride=8 // [Gemm] Mvout C(i=0, j=0)
+Sync 5 dep=00 sync_id=1 sync_core_count=2 // [Gemm] Sync
+Mvout 6 dep=00 src=0x000001820 dst=0x80008820 Width=4 Height=4 stride=8 // [Gemm] Mvout (for dev)
+
+# Core 1 instructions
+Mvin 0 dep=10 src=0x90000000 dst=0x02001000 Width=4 Height=4 stride=16 // [Gemm] Mvin A(i=0)
+Transpose 1 dep=01 ocm_in=0x02001000 ocm_out=0x00000820 // [Gemm] Transpose A
+Mvin 2 dep=10 src=0x90008820 dst=0x02001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=1)
+GEMM 3 dep=11 src0=0x00000820 src1=0x00001820 // [Gemm] GEMM (i=0, j=1)
+Mvout 4 dep=01 src=0x02001820 dst=0x80008820 Width=4 Height=4 stride=8 // [Gemm] Mvout C(i=0, j=0)
+Sync 5 dep=00 sync_id=1 sync_core_count=2 // [Gemm] Sync
+Mvout 6 dep=00 src=0x02001820 dst=0x80008820 Width=4 Height=4 stride=8 // [Gemm] Mvout (for dev)

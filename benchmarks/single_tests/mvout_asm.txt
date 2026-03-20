@@ -1,0 +1,1 @@
+Mvout 0 dep=00 dst=0x60030000 src=0x00005020 Width=32 Height=512 stride=32 // [LayerNorm] Mvout Height=128 Width=128

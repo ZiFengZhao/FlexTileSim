@@ -1,0 +1,1 @@
+Add 0 dep=00 main=0x00005020 res=0x00007020 re_shift=4 re_scale=4 res_shift=4 res_scale=2 // [Add Linear] Add C(i=0, j=0) += add matrix

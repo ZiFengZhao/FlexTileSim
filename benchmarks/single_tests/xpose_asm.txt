@@ -1,0 +1,1 @@
+Transpose 0 dep=00 ocm_in=0x00000820 ocm_out=0x00000820 // [Gemm] Transpose A

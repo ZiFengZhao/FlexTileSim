@@ -1,0 +1,12 @@
+# Core 0 instructions
+Mvin 0 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin A(i=0)
+Mvin 1 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+Mvin 2 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+Mvin 3 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+Mvin 4 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+Mvin 5 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+Mvin 6 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin A(i=0)
+Mvin 7 dep=00 src=0x90000000 dst=0x00001820 Width=4 Height=4 stride=8 // [Gemm] Mvin B(j=0)
+
+# Core 1 instructions
+Transpose 1 dep=00 ocm_in=0x02001000 ocm_out=0x00000820 // [Gemm] Transpose A

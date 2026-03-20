@@ -1,0 +1,1 @@
+Softmax 0 dep=00 ocm_out=0x00004820 ocm_in=0x00000820 de_shift=4 de_scale=2 shift=-6 scale=127 // [softmax1] Softmax height=0
