@@ -1,0 +1,56 @@
+CXX = g++
+CC  = gcc
+AR  = ar
+
+LEX  = flex
+YACC = bison -y
+
+LEX_SRCS  = lex.yy.c
+YACC_SRCS = y.tab.c
+YACC_HDRS = y.tab.h
+
+LEX_OBJS  = lex.yy.o
+YACC_OBJS = y.tab.o
+
+INCPATH = -I. -Iarbiters -Iallocators -Irouters -Inetworks -Ipower
+CXXFLAGS = -std=c++17 -O3 -g -Wall -MMD -MP $(INCPATH)
+CFLAGS   = -O3 -g -Wall
+
+CPP_SRCS := $(filter-out main.cpp,$(wildcard *.cpp)) \
+            $(wildcard arbiters/*.cpp) \
+            $(wildcard allocators/*.cpp) \
+            $(wildcard routers/*.cpp) \
+            $(wildcard networks/*.cpp) \
+            $(wildcard power/*.cpp)
+
+CPP_OBJS := $(CPP_SRCS:.cpp=.o)
+OBJS := $(CPP_OBJS) $(LEX_OBJS) $(YACC_OBJS)
+
+TARGET = libbooksim.a
+
+.PHONY: all clean
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(AR) rcs $@ $^
+
+$(LEX_SRCS): config.l
+	$(LEX) $<
+
+$(YACC_SRCS) $(YACC_HDRS): config.y
+	$(YACC) -d $<
+
+$(LEX_OBJS): $(LEX_SRCS) $(YACC_HDRS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(YACC_OBJS): $(YACC_SRCS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJS) $(TARGET) $(OBJS:.o=.d)
+
+-include $(OBJS:.o=.d)
