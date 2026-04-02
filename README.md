@@ -101,7 +101,9 @@ The back-end is developed in C++17. GCC compiler is required.
 
 Python is required for front-end workload preparation.
 
-- Python >= 3.6.8
+- Python >= 3.8.5
+- matplotlib >= 3.3.4
+- numpy >= 1.19.5
 
 FlexTileSim includes modified versions of ```DRAMSim3``` and ```Booksim2```
 
@@ -277,3 +279,17 @@ Important options:
 - inst_file: workload instruction binary
 
 - enable_log: enable detailed execution traces
+
+## 7. Reproducing Manuscript Results
+
+FlexTileSim provides one-click scripts to reproduce the NoC synthetic traffic experiments presented in the manuscript.
+
+### 7.1 NoC Synthetic Traffic Experiments
+
+These experiments evaluate the analytical NoC model under various traffic patterns and parameter configurations, generating Figure 12 and Figure 14 in the manuscript.
+
+#### Steps to reproduce
+
+```bash
+cd exp/synthetic_traffic
+./run_experiments.sh

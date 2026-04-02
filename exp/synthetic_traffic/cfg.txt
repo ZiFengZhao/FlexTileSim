@@ -1,0 +1,12 @@
+inj_rate=0.002
+sim_cycle=100000
+network_dim=8
+hop_delay=5
+buffer_size=4
+inj_is_burst=0
+burst_prob=0.3
+alpha=1.0
+beta=1.0
+noc_model_type=2
+sampling_period=300
+decay_factor=0.08
