@@ -1,0 +1,361 @@
+Simulation sweep started at Sat 21 Mar 2026 11:32:35 AM CST
+Error log: ./log/error_20260321_1132.log
+Timeout duration: 1h
+
+========== [alexnet cores=4 noc=1 ddr=1] ==========
+Duration: 3 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 4321104
+  Total instructions: 1124116
+  IPS: 357360.83
+  Simulation time: 3.15 s
+  Simulation Time Breakdown:
+  Core Time: 1.42 s (45.13%)
+  NoC Time: 0.18 s (5.88%)
+  DDR Time: 0.05 s (1.71%)
+  Other Time: 1.49 s (47.28%)
+
+========== [alexnet cores=4 noc=1 ddr=0] ==========
+Duration: 25 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 4342861
+  Total instructions: 1124116
+  IPS: 44801.67
+  Simulation time: 25.09 s
+  Simulation Time Breakdown:
+  Core Time: 1.50 s (5.98%)
+  NoC Time: 0.21 s (0.83%)
+  DDR Time: 19.85 s (79.10%)
+  Other Time: 3.54 s (14.09%)
+
+========== [alexnet cores=4 noc=0 ddr=1] ==========
+Duration: 61 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 6222937
+  Total instructions: 1124116
+  IPS: 18480.81
+  Simulation time: 60.83 s
+  Simulation Time Breakdown:
+  Core Time: 2.33 s (3.83%)
+  NoC Time: 56.02 s (92.10%)
+  DDR Time: 0.09 s (0.15%)
+  Other Time: 2.39 s (3.93%)
+
+========== [alexnet cores=4 noc=0 ddr=0] ==========
+Duration: 117 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 6080501
+  Total instructions: 1124116
+  IPS: 9614.94
+  Simulation time: 116.91 s
+  Simulation Time Breakdown:
+  Core Time: 2.21 s (1.89%)
+  NoC Time: 79.76 s (68.23%)
+  DDR Time: 29.34 s (25.09%)
+  Other Time: 5.60 s (4.79%)
+
+========== [resnet18 cores=4 noc=1 ddr=1] ==========
+Duration: 5 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 7552943
+  Total instructions: 1948608
+  IPS: 397870.95
+  Simulation time: 4.90 s
+  Simulation Time Breakdown:
+  Core Time: 2.46 s (50.26%)
+  NoC Time: 0.30 s (6.22%)
+  DDR Time: 0.09 s (1.94%)
+  Other Time: 2.04 s (41.58%)
+
+========== [resnet18 cores=4 noc=1 ddr=0] ==========
+Duration: 42 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 7452588
+  Total instructions: 1948608
+  IPS: 46290.09
+  Simulation time: 42.10 s
+  Simulation Time Breakdown:
+  Core Time: 2.56 s (6.09%)
+  NoC Time: 0.33 s (0.79%)
+  DDR Time: 33.24 s (78.97%)
+  Other Time: 5.96 s (14.15%)
+
+========== [resnet18 cores=4 noc=0 ddr=1] ==========
+Duration: 101 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 10855764
+  Total instructions: 1948608
+  IPS: 19309.55
+  Simulation time: 100.91 s
+  Simulation Time Breakdown:
+  Core Time: 3.67 s (3.63%)
+  NoC Time: 93.16 s (92.31%)
+  DDR Time: 0.13 s (0.13%)
+  Other Time: 3.96 s (3.92%)
+
+========== [resnet18 cores=4 noc=0 ddr=0] ==========
+Duration: 280 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 10575784
+  Total instructions: 1948608
+  IPS: 6958.74
+  Simulation time: 280.02 s
+  Simulation Time Breakdown:
+  Core Time: 5.66 s (2.02%)
+  NoC Time: 191.45 s (68.37%)
+  DDR Time: 70.25 s (25.09%)
+  Other Time: 12.66 s (4.52%)
+
+========== [vgg16 cores=4 noc=1 ddr=1] ==========
+Duration: 38 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 58586581
+  Total instructions: 15191604
+  IPS: 400741.17
+  Simulation time: 37.91 s
+  Simulation Time Breakdown:
+  Core Time: 19.09 s (50.36%)
+  NoC Time: 2.39 s (6.30%)
+  DDR Time: 0.74 s (1.94%)
+  Other Time: 15.69 s (41.40%)
+
+========== [vgg16 cores=4 noc=1 ddr=0] ==========
+Duration: 338 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 59096536
+  Total instructions: 15191604
+  IPS: 45010.39
+  Simulation time: 337.51 s
+  Simulation Time Breakdown:
+  Core Time: 20.65 s (6.12%)
+  NoC Time: 2.64 s (0.78%)
+  DDR Time: 265.91 s (78.78%)
+  Other Time: 48.32 s (14.32%)
+
+========== [vgg16 cores=4 noc=0 ddr=1] ==========
+Duration: 790 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 84278981
+  Total instructions: 15191604
+  IPS: 19226.20
+  Simulation time: 790.15 s
+  Simulation Time Breakdown:
+  Core Time: 28.57 s (3.62%)
+  NoC Time: 728.68 s (92.22%)
+  DDR Time: 1.02 s (0.13%)
+  Other Time: 31.89 s (4.04%)
+
+========== [vgg16 cores=4 noc=0 ddr=0] ==========
+Duration: 1716 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 83078445
+  Total instructions: 15191604
+  IPS: 8857.37
+  Simulation time: 1715.14 s
+  Simulation Time Breakdown:
+  Core Time: 33.94 s (1.98%)
+  NoC Time: 1168.35 s (68.12%)
+  DDR Time: 430.86 s (25.12%)
+  Other Time: 81.99 s (4.78%)
+
+========== [bert_base cores=4 noc=1 ddr=1] ==========
+Duration: 49 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 76039011
+  Total instructions: 19476528
+  IPS: 396593.28
+  Simulation time: 49.11 s
+  Simulation Time Breakdown:
+  Core Time: 24.90 s (50.70%)
+  NoC Time: 3.17 s (6.46%)
+  DDR Time: 0.92 s (1.88%)
+  Other Time: 20.12 s (40.96%)
+
+========== [bert_base cores=4 noc=1 ddr=0] ==========
+Duration: 442 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 76560598
+  Total instructions: 19476528
+  IPS: 44156.75
+  Simulation time: 441.08 s
+  Simulation Time Breakdown:
+  Core Time: 26.38 s (5.98%)
+  NoC Time: 3.50 s (0.79%)
+  DDR Time: 348.96 s (79.11%)
+  Other Time: 62.25 s (14.11%)
+
+========== [bert_base cores=4 noc=0 ddr=1] ==========
+Duration: 1020 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 108258464
+  Total instructions: 19476528
+  IPS: 19089.21
+  Simulation time: 1020.29 s
+  Simulation Time Breakdown:
+  Core Time: 37.48 s (3.67%)
+  NoC Time: 941.30 s (92.26%)
+  DDR Time: 1.30 s (0.13%)
+  Other Time: 40.20 s (3.94%)
+
+========== [bert_base cores=4 noc=0 ddr=0] ==========
+Duration: 1973 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 106971923
+  Total instructions: 19476528
+  IPS: 9877.46
+  Simulation time: 1971.82 s
+  Simulation Time Breakdown:
+  Core Time: 38.96 s (1.98%)
+  NoC Time: 1342.36 s (68.08%)
+  DDR Time: 494.24 s (25.07%)
+  Other Time: 96.25 s (4.88%)
+
+========== [vit_large cores=4 noc=1 ddr=1] ==========
+Duration: 72 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 108676635
+  Total instructions: 28092768
+  IPS: 393928.44
+  Simulation time: 71.31 s
+  Simulation Time Breakdown:
+  Core Time: 36.00 s (50.48%)
+  NoC Time: 5.04 s (7.07%)
+  DDR Time: 1.36 s (1.90%)
+  Other Time: 28.91 s (40.54%)
+
+========== [vit_large cores=4 noc=1 ddr=0] ==========
+Duration: 620 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Analytical
+  Method: queue-based + adaptive parameters
+  Maximum cycle limit: 1000000000
+  Total cycles: 109390922
+  Total instructions: 28092768
+  IPS: 45362.96
+  Simulation time: 619.29 s
+  Simulation Time Breakdown:
+  Core Time: 38.48 s (6.21%)
+  NoC Time: 4.94 s (0.80%)
+  DDR Time: 488.61 s (78.90%)
+  Other Time: 87.26 s (14.09%)
+
+========== [vit_large cores=4 noc=0 ddr=1] ==========
+Duration: 1449 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Analytical
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 154214124
+  Total instructions: 28092768
+  IPS: 19395.21
+  Simulation time: 1448.44 s
+  Simulation Time Breakdown:
+  Core Time: 52.69 s (3.64%)
+  NoC Time: 1337.02 s (92.31%)
+  DDR Time: 1.91 s (0.13%)
+  Other Time: 56.82 s (3.92%)
+
+========== [vit_large cores=4 noc=0 ddr=0] ==========
+Duration: 2788 seconds
+Simulation Statistics:
+  Early termination: Yes
+  DDR Mode: Detailed
+  NoC Mode: Detailed
+  Maximum cycle limit: 1000000000
+  Total cycles: 150902070
+  Total instructions: 28092768
+  IPS: 10077.25
+  Simulation time: 2787.74 s
+  Simulation Time Breakdown:
+  Core Time: 55.37 s (1.99%)
+  NoC Time: 1888.94 s (67.76%)
+  DDR Time: 705.16 s (25.30%)
+  Other Time: 138.27 s (4.96%)
+
+
+=========================================
+Simulation Sweep Summary
+=========================================
+Total experiments: 12
+Completed at: Sat 21 Mar 2026 12:45:39 PM CST
+Simulation sweep completed at Sat 21 Mar 2026 12:45:39 PM CST

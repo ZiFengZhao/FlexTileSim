@@ -1,9 +1,7 @@
 #!/bin/bash
 
-#WORKLOADS=("alexnet" "resnet18" "vgg16" "bert_base" "vit_large")
-WORKLOADS=("bert_base" "vit_large")
+WORKLOADS=("alexnet" "resnet18" "vgg16" "bert_base" "vit_large")
 CORE_NUMS=(32)
-#CORE_NUMS=(4)
 CONFIG_TEMPLATE="./config/template_cfg.txt"
 MODEL_DEFINE_DIR="./transform_compiler/model_define"
 SIM_EXE="./build/npu_sim"

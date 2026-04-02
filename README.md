@@ -1,6 +1,6 @@
 # FlexTileSim
 
-FlexTileSim is a performance simulation framework designed for fast and flexible system-level evaluation of tiled DNN accelerator (or multi-core neural processing units (NPUs)). The framework consists of a front-end and a back-end, as shown in the following figure.
+FlexTileSim is a performance simulation framework for fast and flexible system-level evaluation of tiled DNN accelerators (multi-core NPUs). It consists of a front-end for workload preparation and a back-end for architectural simulation.
 
 <p align="center">
   <img src="images/flextilesim.png" width="450">
@@ -10,103 +10,74 @@ FlexTileSim is a performance simulation framework designed for fast and flexible
   <em>FlexTileSim Framework Overview</em>
 </p>
 
-The front-end performs DNN workload partitioning, operator allocation, and executable code generation. The back-end models tiled accelerator architectures composed of multiple compute tiles interconnected by a Network-on-Chip (NoC) and shared off-chip memory.
+The front-end handles DNN partitioning, operator mapping, and code generation. The back-end models compute tiles interconnected via a NoC and shared off-chip memory.
 
-FlexTileSim is developed to support end-to-end simulation of DNN workloads with configurable architectural parameters and multiple simulation fidelity levels.
+FlexTileSim supports configurable architectural parameters and multiple simulation fidelity levels, enabling efficient design space exploration.
 
-The simulator provides two key capabilities:
+**Key capabilities:**
+- Multi-fidelity system simulation  
+- Online traffic-aware analytical NoC modeling  
 
-- Multi-fidelity system simulation
+---
 
-- Online traffic-aware analytical NoC modeling
-
-These features enable efficient exploration of design trade-offs across different architectural scales and modeling accuracy requirements.
-
-## 1. Key Feature
+## 1. Key Features
 
 ### **1.1 Multi-Fidelity Simulation**
 
-FlexTileSim allows flexible configuration of modeling fidelity for key subsystems:
+Flexible fidelity configuration is supported for major subsystems:
 
-**Compute Tile**: models the architecture of a classic DNN accelerator, such as Huawei Ascend-class NPU and Google Coral NPU.
+**Compute Tile**
+- 4-stage pipeline: Fetch, Decode, Issue, Execute  
+- DMA engine  
+- Compute engine (e.g., systolic array, vector unit)  
+- Scoreboard for dependency tracking  
 
-Each tile contains:
+**NoC**
+- Detailed mode: Booksim2 (cycle-accurate)  
+- Analytical mode: traffic-aware G/G/1 model  
 
-- 4-stage instruction pipeline (Fetch, Decode, Issue, Execute)
-- DMA engine
-- Compute engine (CE): Systolic array, vector unit, etc.
-- Scoreboard mechanism tracking data dependencies between data movement instructions and computation instructions
+**DRAM**
+- Detailed mode: DRAMSim3  
+- Analytical mode: configurable latency/bandwidth  
 
-**NoC**: Two modeling modes are supported:
-
-- Detailed Mode - Based on Booksim2; Cycle-accurate network simulation
-- Analytical Mode - Based on a traffic-aware G/G/1 queueing models
-
-**DRAM**: Two DRAM modeling options:
-
-- Detailed Mode - Based on DRAMSim3; Cycle-accurate memory access simulation
-- Analytical Mode - Configurable latency/bandwidth model
-
-This design allows users to trade simulation accuracy and runtime depending on the research scenario.
-
-Example use cases:
-
-- Detailed microarchitecture analysis
-- Large-scale architecture design space exploration
-- Fast DNN mapping evaluation (e.g., Multi-Tenant)
+---
 
 ### **1.2 Traffic-aware NoC Analytical Model**
 
-A major challenge in analytical NoC modeling for tiled DNN accelerators is that traffic patterns in DNN workloads vary dynamically during execution. Prior analytical models based on queueing theory that usually assumes steady Poisson distribution and poses limitations on adaptability to such traffic variations.
+DNN workloads exhibit dynamic traffic patterns that violate steady-state assumptions (e.g., Poisson arrival).
 
-To this end, FlexTileSim introduces an online traffic-aware NoC analytical model, which:
+FlexTileSim introduces an online analytical model that:
+- Continuously samples network traffic  
+- Dynamically updates arrival and service parameters  
 
-- Continuously samples network traffic
+The model is integrated into an event-driven simulator, enabling closed-loop system simulation with adaptive NoC behavior.
 
-- Dynamically updates analytical parameters during simulation to estimate arrival rate and service time more accurately
-
-Morever, the analytical NoC model can be seemlessly integrated to the system due to an event-driven simulation scheduler.This creates a closed-loop full-system simulation framework and enabling adaptive modeling of network behavior as workload traffic evolves.
+---
 
 ## 2. Repository Structure
 
 ```text
 FlexTileSim/
-│
-├── benchmarks/
-│   Front-end DNN mapping tools and precompiled workload binaries.
-├── config/
-│   Example simulation configuration files.
-├── external/
-│   Modified third-party tools used by the simulator:
-│     - DRAMSim3
-│     - BookSim2
-├── include/
-│   Header files of the simulator.
-├── src/
-│   Main simulator source code.
-├── log/
-│   Simulation logs and execution traces generated during runtime.
-├── Env.cfg
-│   Environment setup script that must be sourced before running the simulator.
+├── benchmarks/   # Front-end tools and workloads
+├── config/       # Simulation configs
+├── external/     # DRAMSim3, Booksim2
+├── include/      # Headers
+├── src/          # Source code
+├── log/          # Execution logs
+├── Env.cfg       # Environment setup
 ├── Makefile
-    Build and execution configuration.
-```
 
 ## 3. Environment Setup
-
 The back-end is developed in C++17. GCC compiler is required.
-
 - gcc >= 9.3.1
 - g++ >= 9.3.1
 
 Python is required for front-end workload preparation.
-
 - Python >= 3.8.5
 - matplotlib >= 3.3.4
 - numpy >= 1.19.5
 
 FlexTileSim includes modified versions of ```DRAMSim3``` and ```Booksim2```
-
 These modules will be compiled automatically during the build process.
 
 ## 4. Quick Start
@@ -246,7 +217,6 @@ These traces provide fine-grained visibility of simulator behavior, including:
 ## 6. Simulation Configuration
 
 FlexTileSim uses a configuration file to specify architectural parameters.
-
 The configuration is divided into four sections.
 
 ### Compute Tile
@@ -254,9 +224,7 @@ The configuration is divided into four sections.
 Key parameters:
 
 - core_num: number of compute tiles
-
 - npu_freq: Compute tile frequency (GHz)
-
 - systolic_array_size: dimension of the systolic array (e.g., 16x16)
 
 ### NoC
@@ -267,7 +235,6 @@ Key parameters:
 ### DRAM
 
 - ddr_mode: model fidelity; 0 -> detailed NoC (DRAMSim3); 1 -> analytical model
-
 - ddr_bandwidth:  DRAM bandwidth (GB/s); only valid in analytical mode
 
 ### Simulation Parameters
@@ -275,9 +242,7 @@ Key parameters:
 Important options:
 
 - max_sim_cycle: maximum allowed simulation cycles
-
 - inst_file: workload instruction binary
-
 - enable_log: enable detailed execution traces
 
 ## 7. Reproducing Manuscript Results
@@ -293,3 +258,42 @@ These experiments evaluate the analytical NoC model under various traffic patter
 ```bash
 cd exp/synthetic_traffic
 ./run_experiments.sh
+```
+
+### **7.2 Full-System Simulation**
+
+This set of experiments evaluates the accuracy and efficiency of FlexTileSim under full-system DNN workloads, corresponding to Table V and Fig. 10 in the manuscript.
+
+---
+
+#### **Accuracy Validation (Table V)**
+
+To reproduce the system-level accuracy validation results:
+
+```bash
+cd exp/accuracy
+python3 plt_sys_accuracy.py
+```
+
+This script processes the simulation results and generates the accuracy comparison between analytical and detailed models.
+
+#### **Large-Scale Simulation Efficiency (Fig. 10)**
+
+To reproduce the large-scale system simulation speedup results:
+
+```bash
+cd exp/speedup
+python3 plt_speedup.py
+```
+
+This script evaluates the performance improvement of different simulation fidelity modes over cycle-accurate simulation across different system scales.
+
+Note that the above Python scripts operate on pre-generated sweep results. These results are included in the repository and can be directly used to reproduce the figures without rerunning simulations.
+
+For users interested in regenerating the full set of experimental data, a helper script is provided at the project root:
+
+```bash
+./run_large_scale_sweep.sh
+```
+
+This script explores multiple DNN workloads and core-count configurations to produce the complete dataset used in the evaluation. Depending on the system configuration and selected modeling fidelity, execution time may vary.
