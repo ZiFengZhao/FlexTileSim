@@ -21,6 +21,7 @@ struct Config {
     double alpha = 0.0;
     double beta = 0.0;
     double inj_rate = 0.0;
+    double static_inj_rate = 0.0;
     long long sim_cycle = 0;
     int network_dim = 0;
     int hop_delay = 0;
@@ -65,6 +66,8 @@ Config parse_config(const string& filename) {
                 cfg.beta = stod(val);
             else if (key == "inj_rate")
                 cfg.inj_rate = stod(val);
+            else if (key == "static_inj_rate")
+                cfg.static_inj_rate = stod(val);
             else if (key == "sim_cycle")
                 cfg.sim_cycle = stoll(val);
             else if (key == "network_dim")
@@ -191,7 +194,7 @@ public:
 };
 
 class G_G_1_model {
-private:
+protected:
     struct TrafficSample {
         long long start_cycle;
         long long end_cycle;
@@ -298,7 +301,7 @@ public:
         return static_cast<long long>(std::round(total_wq));
     }
 
-private:
+protected:
     void precomputeRoutingPaths() {
         m_routing_paths.assign(m_num_routers, vector<vector<int>>(m_num_routers));
         for (int src = 0; src < m_num_routers; src++) {
@@ -585,24 +588,336 @@ private:
     }
 };
 
+class Static_G_G_1_model {
+protected:
+    struct RouterChannel {
+        double lambda = 0;
+        double mu;
+        double ca2;
+        double cs2;
+        double waiting_time;
+        double service_time;
+        double service_time_sq;
+        double base_service_time = 2;
+    };
+
+    int m_network_dim;
+    int m_num_routers;
+    int m_hop_delay;
+    int m_buffer_size;
+    double m_injection_rate;
+    double m_packet_size;
+    vector<vector<RouterChannel>> m_router_channels;
+    vector<vector<vector<int>>> m_routing_paths;
+    vector<vector<double>> m_traffic_matrix;
+
+public:
+    long long rho_satu_counts;
+    long long rho_no_satu_counts;
+
+public:
+    Static_G_G_1_model(int dim, int hop_delay, int buffer_size, double injection_rate, double packet_size)
+        : m_network_dim(dim),
+          m_hop_delay(hop_delay),
+          m_buffer_size(buffer_size),
+          m_injection_rate(injection_rate),
+          m_packet_size(packet_size) {
+        m_num_routers = dim * dim;
+        rho_satu_counts = 0;
+        rho_no_satu_counts = 0;
+
+        double init_service_time = 3.0;
+        m_router_channels.resize(m_num_routers, vector<RouterChannel>(5));
+        for (int i = 0; i < m_num_routers; i++) {
+            for (int j = 0; j < 5; j++) {
+                m_router_channels[i][j] = {0.0,
+                                           1.0 / init_service_time,
+                                           1.0,
+                                           1.0,
+                                           0.0,
+                                           init_service_time,
+                                           pow(init_service_time, 2),
+                                           init_service_time};
+            }
+        }
+
+        precomputeRoutingPaths();
+        constructStaticTrafficMatrix();
+        computeQueuingParameters();
+    }
+
+    long long eval_waiting_time(int src, int dst, int num_flits, long long current_cycle) {
+        const vector<int>& path = m_routing_paths[src][dst];
+        double total_waiting_time = 0.0;
+
+        double source_lambda = m_injection_rate;
+        double source_mu = 1.0 / m_packet_size;
+        double source_rho = source_lambda / source_mu;
+
+        if (source_rho >= 0.95) {
+            return -1;
+        }
+
+        double source_ca2 = 1.0;
+        double source_cs2 = 1.0;
+        double source_waiting =
+            (source_rho / (1.0 - source_rho)) * ((source_ca2 + source_cs2) / 2.0) * (1.0 / source_mu);
+        total_waiting_time += source_waiting;
+
+        for (size_t i = 0; i < path.size(); i++) {
+            int current_router = path[i];
+            int out_port = 0;
+
+            if (i + 1 < path.size()) {
+                int next_router = path[i + 1];
+                out_port = getOutPort(current_router, next_router);
+            } else {
+                out_port = 4;
+            }
+
+            double wq = m_router_channels[current_router][out_port].waiting_time;
+            if (wq >= SATU_THRESHOLD) return -1;
+            total_waiting_time += wq;
+        }
+
+        return static_cast<long long>(std::round(total_waiting_time));
+    }
+
+protected:
+    void precomputeRoutingPaths() {
+        m_routing_paths.assign(m_num_routers, vector<vector<int>>(m_num_routers));
+        for (int src = 0; src < m_num_routers; src++) {
+            for (int dst = 0; dst < m_num_routers; dst++) {
+                if (src == dst) continue;
+
+                int src_x = src % m_network_dim, src_y = src / m_network_dim;
+                int dst_x = dst % m_network_dim, dst_y = dst / m_network_dim;
+
+                int curr_x = src_x, curr_y = src_y;
+                m_routing_paths[src][dst].push_back(src);
+
+                while (curr_x != dst_x) {
+                    curr_x += (curr_x < dst_x) ? 1 : -1;
+                    m_routing_paths[src][dst].push_back(curr_y * m_network_dim + curr_x);
+                }
+                while (curr_y != dst_y) {
+                    curr_y += (curr_y < dst_y) ? 1 : -1;
+                    m_routing_paths[src][dst].push_back(curr_y * m_network_dim + curr_x);
+                }
+            }
+        }
+    }
+
+    void constructStaticTrafficMatrix() {
+        m_traffic_matrix.assign(m_num_routers, vector<double>(m_num_routers, 0.0));
+
+        double per_destination_rate = m_injection_rate / (m_num_routers - 1);
+
+        for (int src = 0; src < m_num_routers; src++) {
+            for (int dst = 0; dst < m_num_routers; dst++) {
+                if (src == dst) continue;
+                m_traffic_matrix[src][dst] = per_destination_rate * (double)(PKT_SIZE);  // flits/node/cycle
+            }
+        }
+    }
+
+    void computeArrivalRates() {
+        for (int r = 0; r < m_num_routers; r++) {
+            for (int p = 0; p < 5; p++) {
+                m_router_channels[r][p].lambda = 0.0;
+            }
+        }
+
+        for (int src = 0; src < m_num_routers; src++) {
+            for (int dst = 0; dst < m_num_routers; dst++) {
+                if (src == dst || m_traffic_matrix[src][dst] <= 0) continue;
+
+                double intensity = m_traffic_matrix[src][dst];
+                const vector<int>& path = m_routing_paths[src][dst];
+
+                for (size_t i = 0; i < path.size(); i++) {
+                    int curr = path[i];
+                    int out_port = (i + 1 < path.size()) ? getOutPort(curr, path[i + 1]) : 4;
+                    m_router_channels[curr][out_port].lambda += intensity;
+                }
+            }
+        }
+    }
+
+    void computeWaitingTimes() {
+        for (int r = 0; r < m_num_routers; r++) {
+            for (int out_port = 0; out_port < 5; out_port++) {
+                auto& ch = m_router_channels[r][out_port];
+
+                if (ch.lambda <= 1e-9) {
+                    ch.waiting_time = 0.0;
+                    continue;
+                }
+
+                double rho = ch.lambda / ch.mu;
+
+                if (rho >= 0.99) {
+                    ch.waiting_time = SATU_THRESHOLD;
+                    rho_satu_counts++;
+                    continue;
+                }
+
+                rho_no_satu_counts++;
+
+                double Wq = (rho / (1.0 - rho)) * ((ch.ca2 + ch.cs2) / 2.0) * (1.0 / ch.mu);
+                ch.waiting_time = max(0.0, Wq);
+            }
+        }
+    }
+
+    void computeServiceTimesRecursive() {
+        const double IB = static_cast<double>(m_buffer_size);
+
+        for (int iter = 0; iter < 3; iter++) {
+            for (int r = 0; r < m_num_routers; r++) {
+                for (int j = 0; j < 5; j++) {
+                    auto& ch = m_router_channels[r][j];
+
+                    if (ch.lambda <= 1e-9) {
+                        ch.service_time = ch.base_service_time;
+                        ch.service_time_sq = ch.base_service_time * ch.base_service_time;
+                        ch.mu = 1.0 / ch.service_time;
+                        ch.cs2 = 0;
+                        continue;
+                    }
+
+                    int downstream_r = getDownstreamRouter(r, j);
+
+                    if (downstream_r < 0) {
+                        ch.service_time = ch.base_service_time;
+                        ch.service_time_sq = ch.base_service_time * ch.base_service_time;
+                    } else {
+                        int down_in_port = getReversePort(j);
+                        auto& down_ch = m_router_channels[downstream_r][down_in_port];
+
+                        double term = ch.base_service_time + down_ch.waiting_time + down_ch.service_time - IB;
+                        term = std::max(ch.base_service_time, term);
+
+                        ch.service_time = term;
+                        ch.service_time_sq = term * term;
+                    }
+
+                    ch.mu = 1.0 / ch.service_time;
+
+                    double sq_mean = ch.service_time * ch.service_time;
+                    ch.cs2 = (ch.service_time_sq / sq_mean) - 1.0;
+
+                    if (ch.cs2 < 0) ch.cs2 = 0;
+                    if (ch.cs2 > 2.0) ch.cs2 = 2.0;
+                }
+            }
+        }
+    }
+
+    void computeArrivalSCV() {
+        for (int r = 0; r < m_num_routers; r++) {
+            for (int p = 0; p < 5; p++) {
+                auto& ch = m_router_channels[r][p];
+
+                if (ch.lambda <= 1e-9) {
+                    ch.ca2 = 1.0;
+                } else {
+                    double rho = ch.lambda / ch.mu;
+                    if (rho > 0.5) {
+                        ch.ca2 = 1.0 + rho;
+                    } else {
+                        ch.ca2 = 1.0;
+                    }
+
+                    if (ch.ca2 < 0.5) ch.ca2 = 0.5;
+                    if (ch.ca2 > 3.0) ch.ca2 = 3.0;
+                }
+            }
+        }
+    }
+
+    void computeQueuingParameters() {
+        computeArrivalRates();
+
+        for (int iter = 0; iter < 5; iter++) {
+            computeArrivalSCV();
+            computeServiceTimesRecursive();
+            computeWaitingTimes();
+        }
+    }
+
+    int getOutPort(int current_router, int next_router) {
+        int cx = current_router % m_network_dim, cy = current_router / m_network_dim;
+        int nx = next_router % m_network_dim, ny = next_router / m_network_dim;
+        if (ny < cy) return 0;
+        if (nx > cx) return 1;
+        if (ny > cy) return 2;
+        if (nx < cx) return 3;
+        return 4;
+    }
+
+    int getDownstreamRouter(int router_id, int out_port) {
+        int x = router_id % m_network_dim, y = router_id / m_network_dim;
+        if (out_port == 0)
+            y -= 1;
+        else if (out_port == 1)
+            x += 1;
+        else if (out_port == 2)
+            y += 1;
+        else if (out_port == 3)
+            x -= 1;
+        else
+            return -1;
+
+        if (x < 0 || y < 0 || x >= m_network_dim || y >= m_network_dim) return -1;
+        return y * m_network_dim + x;
+    }
+
+    int getReversePort(int out_port) {
+        switch (out_port) {
+            case 0:
+                return 2;  // North -> South
+            case 1:
+                return 3;  // East -> West
+            case 2:
+                return 0;  // South -> North
+            case 3:
+                return 1;  // West -> East
+            case 4:
+                return 4;  // Local
+            default:
+                return 4;
+        }
+    }
+};
+
 class NoCModel {
 public:
     Config cfg;
     vector<Node>& nodes;
     M_D_1_model md1_model;
     G_G_1_model gg1_model;
+    Static_G_G_1_model static_model;
     int hop_delay = 1;
     long long total_latency = 0;
     long long received_packets = 0;
     long long saturated_packets = 0;
     priority_queue<Event, vector<Event>, greater<Event>> completion_queue;
     int pkt_id = 0;
+
     NoCModel(const Config& cfg, vector<Node>& nodes_ref)
         : cfg(cfg),
           nodes(nodes_ref),
           gg1_model(cfg.network_dim, cfg.hop_delay, cfg.sampling_period, cfg.buffer_size, cfg.decay_factor,
-                    cfg.linear_factor) {
+                    cfg.linear_factor),
+          static_model(cfg.network_dim, cfg.hop_delay, cfg.buffer_size, cfg.static_inj_rate, PKT_SIZE) {
         hop_delay = cfg.hop_delay;
+    }
+
+    inline long long get_current_time_ns() {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(
+                   std::chrono::high_resolution_clock::now().time_since_epoch())
+            .count();
     }
 
     void process_packet(const Packet& p, long long current_cycle) {
@@ -629,18 +944,29 @@ public:
                 saturated_packets++;
                 waiting_time = SATU_THRESHOLD;
             }
+
+        } else if (cfg.noc_model_type == 3) {  // static
+            int src_id = p.src_y * cfg.network_dim + p.src_x;
+            int dst_id = p.dst_y * cfg.network_dim + p.dst_x;
+
+            waiting_time = static_model.eval_waiting_time(src_id, dst_id, PKT_SIZE, current_cycle);
+
+            if (waiting_time < 0) {
+                saturated_packets++;
+                waiting_time = SATU_THRESHOLD;
+            }
         }
         long long inj_queueing_time = current_cycle - p.creation_time;
         long long network_delay = hop_delay * hops + PKT_SIZE - 1;
-
+        long long inj_delay = cfg.buffer_size + 1;
         Event e;
         e.src_node_id = p.src_y * cfg.network_dim + p.src_x;
-        if (cfg.noc_model_type == 1 || cfg.noc_model_type == 2) {
+        if (cfg.noc_model_type == 1 || cfg.noc_model_type == 2 || cfg.noc_model_type == 3) {
             e.latency = waiting_time + network_delay;
             e.arrival_time = p.creation_time + e.latency;
-        } else {
-            e.arrival_time = current_cycle + network_delay;
-            e.latency = inj_queueing_time + network_delay;
+        } else if (cfg.noc_model_type == 0) {
+            e.arrival_time = current_cycle + network_delay - inj_delay;
+            e.latency = network_delay - inj_delay;
         }
         pkt_id++;
         completion_queue.push(e);
@@ -697,6 +1023,8 @@ public:
             std::cout << "M/D/1 model" << std::endl;
         } else if (cfg.noc_model_type == 2) {
             std::cout << "G/G/1 model" << std::endl;
+        } else if (cfg.noc_model_type == 3) {
+            std::cout << "Static model" << std::endl;
         }
     }
 
@@ -752,11 +1080,6 @@ int main(int argc, char* argv[]) {
     Config cfg = parse_config("./cfg.txt");
 
     TopLevelSim sim(cfg);
-    auto start_time = std::chrono::high_resolution_clock::now();
     sim.run();
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
-
-    std::cout << "Simulation Time: " << duration.count() << " ms" << std::endl;
     return 0;
 }

@@ -68,6 +68,12 @@ def update_config_params(name, lines, inj_rate, alpha, beta):
             new_lines.append(f"alpha={alpha}\n")
         elif sline.startswith('beta='):
             new_lines.append(f"beta={beta}\n")
+        elif sline.startswith("noc_model_type="):
+            new_lines.append("noc_model_type=2\n")
+        elif sline.startswith("decay_factor="):
+            new_lines.append("decay_factor=0.10\n")
+        elif sline.startswith("sampling_period="):
+            new_lines.append("sampling_period=1000\n")
         else:
             new_lines.append(line)
     return new_lines

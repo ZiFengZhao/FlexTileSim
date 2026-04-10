@@ -1,4 +1,5 @@
 inj_rate=0.002
+static_inj_rate=0.0032
 sim_cycle=100000
 network_dim=8
 hop_delay=5
@@ -8,5 +9,5 @@ burst_prob=0.3
 alpha=1.0
 beta=1.0
 noc_model_type=2
-sampling_period=300
-decay_factor=0.08
+sampling_period=1000
+decay_factor=1.0
