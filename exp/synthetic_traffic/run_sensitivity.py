@@ -261,7 +261,7 @@ def main():
         print(f"Best: Mid Burst sp={best_sp_b[0]} ({best_sp_b[1]:.2f}%), df={best_df_b[0]:.4f} ({best_df_b[1]:.2f}%)")
     
     if args.plot:
-        sp_s, df_s, sp_b, df_b = load_results()
+        #sp_s, df_s, sp_b, df_b = load_results()
         plot_curves(sp_s, df_s, sp_b, df_b)
         print(f"Plots saved to {RESULTS_DIR}/")
 
