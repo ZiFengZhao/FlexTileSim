@@ -251,13 +251,13 @@ FlexTileSim provides one-click scripts to reproduce the NoC synthetic traffic ex
 
 ### 7.1 NoC Synthetic Traffic Experiments
 
-These experiments evaluate the analytical NoC model under various traffic patterns and parameter configurations, generating Figure 12 and Figure 14 in the manuscript.
+These experiments evaluate the analytical NoC model under various traffic patterns and parameter configurations, generating Figure 11 and Figure 14 in the manuscript.
 
 #### Steps to reproduce
 
 ```bash
 cd exp/synthetic_traffic
-./run_experiments.sh
+./run_noc_experiments.sh
 ```
 
 ### **7.2 Full-System Simulation**
