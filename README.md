@@ -31,6 +31,7 @@ Flexible fidelity configuration is supported for major subsystems:
 - DMA engine  
 - Compute engine (e.g., systolic array, vector unit)  
 - Scoreboard for dependency tracking  
+- The tile is implemented with a hybrid of analytical and cycle-accurate models, in which execution latency is computed analytically while the pipeline is simulated in a cycle-accurate manner
 
 **NoC**
 - Detailed mode: Booksim2 (cycle-accurate)  
@@ -277,9 +278,9 @@ python3 plt_sys_accuracy.py
 
 This script processes the simulation results and generates the accuracy comparison between analytical and detailed models.
 
-#### **Large-Scale Simulation Efficiency (Fig. 10)**
+#### **Large-Scale Simulation Efficiency (Fig. 19)**
 
-To reproduce the large-scale system simulation speedup results:
+To reproduce the 32-tile system simulation speedup results:
 
 ```bash
 cd exp/speedup
