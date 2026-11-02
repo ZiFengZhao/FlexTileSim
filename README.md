@@ -278,7 +278,7 @@ python3 plt_sys_accuracy.py
 
 This script processes the simulation results and generates the accuracy comparison between analytical and detailed models.
 
-#### **Large-Scale Simulation Efficiency (Fig. 19)**
+#### **Large-Scale Simulation Efficiency (Fig. 9)**
 
 To reproduce the 32-tile system simulation speedup results:
 
